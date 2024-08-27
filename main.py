@@ -48,7 +48,7 @@ def upload_file(service, file_path, folder_id, email_address):
         print(f'An unexpected error occurred while uploading {file_name}: {e}')
 
 # usage:
-# python backup_script.py --directory "C:/path/to/your/backup/files" --folder_id "1oNFK9bCu7DCwOheQaz9aav0l5LSYfOsA" --key_file "upload-drive-433718-c39e41e16470.json" --email "sajidjqurashi1@gmail.com"
+# python backup_script.py --directory "C:/path/to/your/backup/files" --folder_id "your-folder-id" --key_file "your-json-file.json" --email "sajidjqurashi1@gmail.com"
 
 def main():
     # Parse command-line arguments
@@ -64,10 +64,13 @@ def main():
     service = build('drive', 'v3', credentials=creds)
 
     # Iterate through all files in the backup directory
-    for file_name in os.listdir(args.directory):
-        file_path = os.path.join(args.directory, file_name)
-        if os.path.isfile(file_path):
-            upload_file(service, file_path, args.folder_id, args.email)
+    if os.path.exists(args.directory):
+        if os.path.isfile(args.directory):
+            upload_file(service, args.directory, args.folder_id, args.email)
+        else:
+            for file_name in os.listdir(args.directory):
+                file_path = os.path.join(args.directory, file_name)
+                upload_file(service, file_path, args.folder_id, args.email)
 
 if __name__ == '__main__':
     main()
